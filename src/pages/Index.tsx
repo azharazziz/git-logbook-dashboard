@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { printReport } from "@/utils/printReport";
-import { Loader2, Printer } from "lucide-react";
+import { FormalReportDialog } from "@/components/dashboard/FormalReportDialog";
+import { Loader2, Printer, FileText } from "lucide-react";
 import dayjs from "dayjs";
 
 function getDateRange(filter: TimeFilter, custom: { from: string; to: string }) {
@@ -45,6 +46,7 @@ const Index = () => {
   const [customRange, setCustomRange] = useState({ from: "", to: "" });
   const [autoRefresh, setAutoRefresh] = useState<AutoRefresh>("off");
   const [modalCommit, setModalCommit] = useState<NormalizedCommit | null>(null);
+  const [showFormalReport, setShowFormalReport] = useState(false);
 
   const loadCommits = useCallback(async () => {
     setLoading(true);
@@ -97,7 +99,10 @@ const Index = () => {
             <SidebarTrigger className="mr-3" />
             <h1 className="text-sm font-semibold text-foreground">Git Logbook Dashboard</h1>
             {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin text-muted-foreground" />}
-            <div className="ml-auto">
+            <div className="ml-auto flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => setShowFormalReport(true)}>
+                <FileText className="mr-1 h-4 w-4" /> Laporan Formal
+              </Button>
               <Button variant="outline" size="sm" onClick={() => printReport(commits)}>
                 <Printer className="mr-1 h-4 w-4" /> Cetak Report
               </Button>
@@ -125,6 +130,7 @@ const Index = () => {
       </div>
 
       <CommitModal commit={modalCommit} open={!!modalCommit} onClose={() => setModalCommit(null)} />
+      <FormalReportDialog commits={commits} open={showFormalReport} onClose={() => setShowFormalReport(false)} />
     </SidebarProvider>
   );
 };
