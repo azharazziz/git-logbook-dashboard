@@ -37,15 +37,4 @@ export const config = {
       repo: "donasi-alquran-linktree",
     },
   ] as RepoConfig[],
-
-  // =============================================
-  // DATA INSTANSI (untuk laporan formal)
-  // =============================================
-  report: {
-    institution: "Nama Instansi / Perusahaan",
-    department: "Divisi Teknologi Informasi",
-    authorName: "",
-    supervisorName: "",
-    title: "LAPORAN AKTIVITAS PENGEMBANGAN PERANGKAT LUNAK",
-  },
 };

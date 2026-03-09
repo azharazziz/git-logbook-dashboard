@@ -23,11 +23,11 @@ interface Props {
 }
 
 export function FormalReportDialog({ commits: currentCommits, open, onClose }: Props) {
-  const [institution, setInstitution] = useState(config.report.institution);
-  const [department, setDepartment] = useState(config.report.department);
-  const [authorName, setAuthorName] = useState(config.report.authorName);
-  const [supervisorName, setSupervisorName] = useState(config.report.supervisorName);
-  const [title, setTitle] = useState(config.report.title);
+  const [institution, setInstitution] = useState("");
+  const [department, setDepartment] = useState("");
+  const [authorName, setAuthorName] = useState("");
+  const [supervisorName, setSupervisorName] = useState("");
+  const [title, setTitle] = useState("LAPORAN AKTIVITAS PENGEMBANGAN PERANGKAT LUNAK");
 
   // Period selection
   const [periodType, setPeriodType] = useState<"current" | "custom">("current");
