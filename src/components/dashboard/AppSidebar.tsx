@@ -1,4 +1,4 @@
-import { config } from "@/config";
+import { getRepositories, RepoConfig } from "@/config";
 import { TimeFilter, AutoRefresh } from "@/types/commit";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel,
