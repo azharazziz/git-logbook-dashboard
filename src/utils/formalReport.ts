@@ -8,6 +8,8 @@ interface FormalReportOptions {
   authorName?: string;
   supervisorName?: string;
   reportNumber?: string;
+  periodFrom?: Date;
+  periodTo?: Date;
 }
 
 export function generateFormalReport(commits: NormalizedCommit[], options: FormalReportOptions = {}) {
@@ -33,8 +35,8 @@ export function generateFormalReport(commits: NormalizedCommit[], options: Forma
   const totalCommits = commits.length;
   const activeRepos = [...new Set(commits.map((c) => c.repo))];
   const authors = [...new Set(commits.map((c) => c.author))];
-  const startDate = commits.length > 0 ? dayjs(commits[commits.length - 1].date) : dayjs();
-  const endDate = commits.length > 0 ? dayjs(commits[0].date) : dayjs();
+  const startDate = options.periodFrom ? dayjs(options.periodFrom) : (commits.length > 0 ? dayjs(commits[commits.length - 1].date) : dayjs());
+  const endDate = options.periodTo ? dayjs(options.periodTo) : (commits.length > 0 ? dayjs(commits[0].date) : dayjs());
 
   const repoStats: Record<string, number> = {};
   commits.forEach((c) => { repoStats[c.repo] = (repoStats[c.repo] || 0) + 1; });

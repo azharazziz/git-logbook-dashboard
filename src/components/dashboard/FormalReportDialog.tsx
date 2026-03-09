@@ -72,6 +72,8 @@ export function FormalReportDialog({ commits: currentCommits, open, onClose }: P
       department: department || undefined,
       authorName: authorName || undefined,
       supervisorName: supervisorName || undefined,
+      periodFrom: periodType === "custom" ? dateFrom : undefined,
+      periodTo: periodType === "custom" ? dateTo : undefined,
     });
     onClose();
   };
