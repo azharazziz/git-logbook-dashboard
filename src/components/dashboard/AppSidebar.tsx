@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { GitBranch, Sun, Moon, RefreshCw, Settings, LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   selectedRepo: string;
@@ -33,6 +33,7 @@ export function AppSidebar({
   customRange, onCustomRange, autoRefresh, onAutoRefresh, onRefresh, loading,
   repos, onLogout,
 }: Props) {
+  const navigate = useNavigate();
   const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export function AppSidebar({
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Repository</SidebarGroupLabel>
-           <SidebarGroupContent className="px-2 group-data-[collapsible=icon]:hidden">
+          <SidebarGroupContent className="px-2 group-data-[collapsible=icon]:hidden">
             <Select value={selectedRepo} onValueChange={onSelectRepo}>
               <SelectTrigger className="w-full bg-sidebar-accent text-sidebar-accent-foreground">
                 <SelectValue />
