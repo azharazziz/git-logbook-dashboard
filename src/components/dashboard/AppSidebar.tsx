@@ -122,7 +122,7 @@ export function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 group-data-[collapsible=icon]:hidden">
+      <SidebarFooter className="p-4 space-y-2 group-data-[collapsible=icon]:hidden">
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground">Dark Mode</span>
           <div className="flex items-center gap-2">
@@ -130,6 +130,14 @@ export function AppSidebar({
             <Switch checked={dark} onCheckedChange={setDark} />
             <Moon className="h-3 w-3 text-muted-foreground" />
           </div>
+        </div>
+        <div className="flex gap-1">
+          <Button variant="ghost" size="sm" className="flex-1 text-xs justify-start" onClick={() => navigate("/settings")}>
+            <Settings className="mr-1 h-3 w-3" /> Pengaturan
+          </Button>
+          <Button variant="ghost" size="sm" className="text-xs text-destructive" onClick={onLogout}>
+            <LogOut className="h-3 w-3" />
+          </Button>
         </div>
       </SidebarFooter>
     </Sidebar>
