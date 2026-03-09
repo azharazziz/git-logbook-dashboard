@@ -1,4 +1,4 @@
-import { getGithubToken, RepoConfig } from "@/config";
+import { config, RepoConfig } from "@/config";
 import { NormalizedCommit, CommitDetail, CommitFile } from "@/types/commit";
 
 function getHeaders() {
