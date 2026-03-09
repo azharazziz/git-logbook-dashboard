@@ -48,7 +48,7 @@ export function FormalReportDialog({ commits: currentCommits, open, onClose }: P
     const fetchData = async () => {
       setLoading(true);
       try {
-        const repos = getRepositories();
+        const repos = config.repositories;
         const since = dayjs(dateFrom).startOf("day").toISOString();
         const until = dayjs(dateTo).endOf("day").toISOString();
         const data = await fetchAllCommits(repos, since, until);
