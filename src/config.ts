@@ -5,16 +5,27 @@ export interface RepoConfig {
 }
 
 export const config = {
-  githubToken: "",
-
-  // Login credentials (config-based auth)
+  // =============================================
+  // LOGIN CREDENTIALS
+  // Ubah username dan password di sini
+  // =============================================
   auth: {
     username: "admin",
     password: "admin123",
   },
 
-  // Default repositories (can be overridden via UI settings stored in localStorage)
-  defaultRepositories: [
+  // =============================================
+  // GITHUB TOKEN (opsional, untuk private repo)
+  // Dapatkan di: https://github.com/settings/tokens
+  // Scope yang diperlukan: "repo" (untuk private repo)
+  // =============================================
+  githubToken: "",
+
+  // =============================================
+  // DAFTAR REPOSITORY
+  // Tambahkan repository yang ingin di-track
+  // =============================================
+  repositories: [
     {
       name: "Portal Labkesmas",
       owner: "username",
@@ -26,25 +37,15 @@ export const config = {
       repo: "donasi-alquran-linktree",
     },
   ] as RepoConfig[],
+
+  // =============================================
+  // DATA INSTANSI (untuk laporan formal)
+  // =============================================
+  report: {
+    institution: "Nama Instansi / Perusahaan",
+    department: "Divisi Teknologi Informasi",
+    authorName: "",
+    supervisorName: "",
+    title: "LAPORAN AKTIVITAS PENGEMBANGAN PERANGKAT LUNAK",
+  },
 };
-
-// Helper to get repositories (localStorage override or defaults)
-export function getRepositories(): RepoConfig[] {
-  try {
-    const stored = localStorage.getItem("git-logbook-repos");
-    if (stored) return JSON.parse(stored);
-  } catch {}
-  return config.defaultRepositories;
-}
-
-export function saveRepositories(repos: RepoConfig[]) {
-  localStorage.setItem("git-logbook-repos", JSON.stringify(repos));
-}
-
-export function getGithubToken(): string {
-  return localStorage.getItem("git-logbook-token") || config.githubToken;
-}
-
-export function saveGithubToken(token: string) {
-  localStorage.setItem("git-logbook-token", token);
-}
