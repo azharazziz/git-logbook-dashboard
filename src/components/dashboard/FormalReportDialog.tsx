@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NormalizedCommit } from "@/types/commit";
-import { getRepositories, RepoConfig } from "@/config";
+import { config } from "@/config";
 import { fetchAllCommits } from "@/services/githubService";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
