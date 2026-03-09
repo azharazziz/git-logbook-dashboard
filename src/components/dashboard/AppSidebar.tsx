@@ -30,6 +30,7 @@ interface Props {
 export function AppSidebar({
   selectedRepo, onSelectRepo, timeFilter, onTimeFilter,
   customRange, onCustomRange, autoRefresh, onAutoRefresh, onRefresh, loading,
+  repos, onLogout,
 }: Props) {
   const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
 
