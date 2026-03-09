@@ -15,30 +15,45 @@ export async function fetchCommits(
   since?: string,
   until?: string
 ): Promise<NormalizedCommit[]> {
-  const params = new URLSearchParams();
-  if (since) params.set("since", since);
-  if (until) params.set("until", until);
-  params.set("per_page", "100");
+  const allCommits: NormalizedCommit[] = [];
+  let page = 1;
 
-  const url = `https://api.github.com/repos/${repoConfig.owner}/${repoConfig.repo}/commits?${params}`;
-  const res = await fetch(url, { headers: getHeaders() });
+  while (true) {
+    const params = new URLSearchParams();
+    if (since) params.set("since", since);
+    if (until) params.set("until", until);
+    params.set("per_page", "100");
+    params.set("page", String(page));
 
-  if (!res.ok) {
-    throw new Error(`GitHub API error for ${repoConfig.name}: ${res.status} ${res.statusText}`);
+    const url = `https://api.github.com/repos/${repoConfig.owner}/${repoConfig.repo}/commits?${params}`;
+    const res = await fetch(url, { headers: getHeaders() });
+
+    if (!res.ok) {
+      throw new Error(`GitHub API error for ${repoConfig.name}: ${res.status} ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) break;
+
+    allCommits.push(
+      ...data.map((item: any) => ({
+        sha: item.sha,
+        repo: repoConfig.name,
+        repoFullName: `${repoConfig.owner}/${repoConfig.repo}`,
+        author: item.commit?.author?.name || item.author?.login || "Unknown",
+        message: item.commit?.message || "",
+        date: item.commit?.author?.date || "",
+        url: item.html_url,
+        avatarUrl: item.author?.avatar_url || "",
+      }))
+    );
+
+    // If less than 100 returned, no more pages
+    if (data.length < 100) break;
+    page++;
   }
 
-  const data = await res.json();
-
-  return data.map((item: any) => ({
-    sha: item.sha,
-    repo: repoConfig.name,
-    repoFullName: `${repoConfig.owner}/${repoConfig.repo}`,
-    author: item.commit?.author?.name || item.author?.login || "Unknown",
-    message: item.commit?.message || "",
-    date: item.commit?.author?.date || "",
-    url: item.html_url,
-    avatarUrl: item.author?.avatar_url || "",
-  }));
+  return allCommits;
 }
 
 export async function fetchAllCommits(
