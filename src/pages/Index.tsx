@@ -46,6 +46,7 @@ const Index = () => {
   const [customRange, setCustomRange] = useState({ from: "", to: "" });
   const [autoRefresh, setAutoRefresh] = useState<AutoRefresh>("off");
   const [modalCommit, setModalCommit] = useState<NormalizedCommit | null>(null);
+  const [showFormalReport, setShowFormalReport] = useState(false);
 
   const loadCommits = useCallback(async () => {
     setLoading(true);
