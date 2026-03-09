@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { getRepositories, RepoConfig } from "@/config";
+import { config, RepoConfig } from "@/config";
 import { NormalizedCommit, TimeFilter, AutoRefresh } from "@/types/commit";
 import { fetchAllCommits, fetchCommits } from "@/services/githubService";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
