@@ -8,6 +8,8 @@ interface FormalReportOptions {
   authorName?: string;
   supervisorName?: string;
   reportNumber?: string;
+  periodFrom?: Date;
+  periodTo?: Date;
 }
 
 export function generateFormalReport(commits: NormalizedCommit[], options: FormalReportOptions = {}) {
