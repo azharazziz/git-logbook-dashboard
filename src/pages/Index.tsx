@@ -38,7 +38,7 @@ function getDateRange(filter: TimeFilter, custom: { from: string; to: string }) 
 const Index = () => {
   const { toast } = useToast();
   const { logout } = useAuth();
-  const [repos] = useState<RepoConfig[]>(() => getRepositories());
+  const repos = config.repositories;
   const [commits, setCommits] = useState<NormalizedCommit[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedRepo, setSelectedRepo] = useState("all");
