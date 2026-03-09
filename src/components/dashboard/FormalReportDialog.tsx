@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NormalizedCommit } from "@/types/commit";
-import { getRepositories, RepoConfig } from "@/config";
+import { config } from "@/config";
 import { fetchAllCommits } from "@/services/githubService";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -23,11 +23,11 @@ interface Props {
 }
 
 export function FormalReportDialog({ commits: currentCommits, open, onClose }: Props) {
-  const [institution, setInstitution] = useState("");
-  const [department, setDepartment] = useState("");
-  const [authorName, setAuthorName] = useState("");
-  const [supervisorName, setSupervisorName] = useState("");
-  const [title, setTitle] = useState("LAPORAN AKTIVITAS PENGEMBANGAN PERANGKAT LUNAK");
+  const [institution, setInstitution] = useState(config.report.institution);
+  const [department, setDepartment] = useState(config.report.department);
+  const [authorName, setAuthorName] = useState(config.report.authorName);
+  const [supervisorName, setSupervisorName] = useState(config.report.supervisorName);
+  const [title, setTitle] = useState(config.report.title);
 
   // Period selection
   const [periodType, setPeriodType] = useState<"current" | "custom">("current");
@@ -48,7 +48,7 @@ export function FormalReportDialog({ commits: currentCommits, open, onClose }: P
     const fetchData = async () => {
       setLoading(true);
       try {
-        const repos = getRepositories();
+        const repos = config.repositories;
         const since = dayjs(dateFrom).startOf("day").toISOString();
         const until = dayjs(dateTo).endOf("day").toISOString();
         const data = await fetchAllCommits(repos, since, until);

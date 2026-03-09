@@ -1,12 +1,11 @@
-import { getGithubToken, RepoConfig } from "@/config";
+import { config, RepoConfig } from "@/config";
 import { NormalizedCommit, CommitDetail, CommitFile } from "@/types/commit";
 
 function getHeaders() {
   const h: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
   };
-  const token = getGithubToken();
-  if (token) h.Authorization = `Bearer ${token}`;
+  if (config.githubToken) h.Authorization = `Bearer ${config.githubToken}`;
   return h;
 }
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { getRepositories, RepoConfig } from "@/config";
+import { config, RepoConfig } from "@/config";
 import { NormalizedCommit, TimeFilter, AutoRefresh } from "@/types/commit";
 import { fetchAllCommits, fetchCommits } from "@/services/githubService";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -38,7 +38,7 @@ function getDateRange(filter: TimeFilter, custom: { from: string; to: string }) 
 const Index = () => {
   const { toast } = useToast();
   const { logout } = useAuth();
-  const [repos] = useState<RepoConfig[]>(() => getRepositories());
+  const repos = config.repositories;
   const [commits, setCommits] = useState<NormalizedCommit[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedRepo, setSelectedRepo] = useState("all");
