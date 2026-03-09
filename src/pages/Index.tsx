@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { config } from "@/config";
+import { useState, useEffect, useCallback } from "react";
+import { getRepositories, RepoConfig } from "@/config";
 import { NormalizedCommit, TimeFilter, AutoRefresh } from "@/types/commit";
 import { fetchAllCommits, fetchCommits } from "@/services/githubService";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -10,8 +10,11 @@ import { CommitTable } from "@/components/dashboard/CommitTable";
 import { LogbookView } from "@/components/dashboard/LogbookView";
 import { CommitModal } from "@/components/dashboard/CommitModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { printReport } from "@/utils/printReport";
+import { Loader2, Printer } from "lucide-react";
 import dayjs from "dayjs";
 
 function getDateRange(filter: TimeFilter, custom: { from: string; to: string }) {
@@ -33,6 +36,8 @@ function getDateRange(filter: TimeFilter, custom: { from: string; to: string }) 
 
 const Index = () => {
   const { toast } = useToast();
+  const { logout } = useAuth();
+  const [repos] = useState<RepoConfig[]>(() => getRepositories());
   const [commits, setCommits] = useState<NormalizedCommit[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedRepo, setSelectedRepo] = useState("all");
@@ -47,9 +52,9 @@ const Index = () => {
       const { since, until } = getDateRange(timeFilter, customRange);
       let data: NormalizedCommit[];
       if (selectedRepo === "all") {
-        data = await fetchAllCommits(config.repositories, since, until);
+        data = await fetchAllCommits(repos, since, until);
       } else {
-        const repo = config.repositories.find((r) => r.repo === selectedRepo);
+        const repo = repos.find((r) => r.repo === selectedRepo);
         data = repo ? await fetchCommits(repo, since, until) : [];
       }
       setCommits(data);
@@ -58,7 +63,7 @@ const Index = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedRepo, timeFilter, customRange, toast]);
+  }, [selectedRepo, timeFilter, customRange, repos, toast]);
 
   useEffect(() => { loadCommits(); }, [loadCommits]);
 
@@ -83,6 +88,8 @@ const Index = () => {
           onAutoRefresh={setAutoRefresh}
           onRefresh={loadCommits}
           loading={loading}
+          repos={repos}
+          onLogout={logout}
         />
 
         <div className="flex-1 flex flex-col min-w-0">
@@ -90,6 +97,11 @@ const Index = () => {
             <SidebarTrigger className="mr-3" />
             <h1 className="text-sm font-semibold text-foreground">Git Logbook Dashboard</h1>
             {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin text-muted-foreground" />}
+            <div className="ml-auto">
+              <Button variant="outline" size="sm" onClick={() => printReport(commits)}>
+                <Printer className="mr-1 h-4 w-4" /> Cetak Report
+              </Button>
+            </div>
           </header>
 
           <main className="flex-1 overflow-auto p-4 md:p-6 space-y-6">

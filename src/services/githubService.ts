@@ -1,12 +1,13 @@
-import { config, RepoConfig } from "@/config";
+import { getGithubToken, RepoConfig } from "@/config";
 import { NormalizedCommit, CommitDetail, CommitFile } from "@/types/commit";
 
-const headers: Record<string, string> = {
-  Accept: "application/vnd.github.v3+json",
-};
-
-if (config.githubToken) {
-  headers.Authorization = `Bearer ${config.githubToken}`;
+function getHeaders() {
+  const h: Record<string, string> = {
+    Accept: "application/vnd.github.v3+json",
+  };
+  const token = getGithubToken();
+  if (token) h.Authorization = `Bearer ${token}`;
+  return h;
 }
 
 export async function fetchCommits(
@@ -20,7 +21,7 @@ export async function fetchCommits(
   params.set("per_page", "100");
 
   const url = `https://api.github.com/repos/${repoConfig.owner}/${repoConfig.repo}/commits?${params}`;
-  const res = await fetch(url, { headers });
+  const res = await fetch(url, { headers: getHeaders() });
 
   if (!res.ok) {
     throw new Error(`GitHub API error for ${repoConfig.name}: ${res.status} ${res.statusText}`);
@@ -73,7 +74,7 @@ export async function fetchCommitDetail(
   sha: string
 ): Promise<CommitDetail | null> {
   const url = `https://api.github.com/repos/${owner}/${repo}/commits/${sha}`;
-  const res = await fetch(url, { headers });
+  const res = await fetch(url, { headers: getHeaders() });
   if (!res.ok) return null;
   const data = await res.json();
 

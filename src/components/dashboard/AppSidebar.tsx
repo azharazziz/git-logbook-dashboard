@@ -1,4 +1,4 @@
-import { config } from "@/config";
+import { getRepositories, RepoConfig } from "@/config";
 import { TimeFilter, AutoRefresh } from "@/types/commit";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel,
@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { GitBranch, Sun, Moon, RefreshCw } from "lucide-react";
+import { GitBranch, Sun, Moon, RefreshCw, Settings, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   selectedRepo: string;
@@ -23,12 +24,16 @@ interface Props {
   onAutoRefresh: (v: AutoRefresh) => void;
   onRefresh: () => void;
   loading: boolean;
+  repos: RepoConfig[];
+  onLogout: () => void;
 }
 
 export function AppSidebar({
   selectedRepo, onSelectRepo, timeFilter, onTimeFilter,
   customRange, onCustomRange, autoRefresh, onAutoRefresh, onRefresh, loading,
+  repos, onLogout,
 }: Props) {
+  const navigate = useNavigate();
   const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
 
   useEffect(() => {
@@ -61,7 +66,7 @@ export function AppSidebar({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Repositories</SelectItem>
-                {config.repositories.map((r) => (
+                {repos.map((r) => (
                   <SelectItem key={r.repo} value={r.repo}>{r.name}</SelectItem>
                 ))}
               </SelectContent>
@@ -118,7 +123,7 @@ export function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 group-data-[collapsible=icon]:hidden">
+      <SidebarFooter className="p-4 space-y-2 group-data-[collapsible=icon]:hidden">
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground">Dark Mode</span>
           <div className="flex items-center gap-2">
@@ -126,6 +131,14 @@ export function AppSidebar({
             <Switch checked={dark} onCheckedChange={setDark} />
             <Moon className="h-3 w-3 text-muted-foreground" />
           </div>
+        </div>
+        <div className="flex gap-1">
+          <Button variant="ghost" size="sm" className="flex-1 text-xs justify-start" onClick={() => navigate("/settings")}>
+            <Settings className="mr-1 h-3 w-3" /> Pengaturan
+          </Button>
+          <Button variant="ghost" size="sm" className="text-xs text-destructive" onClick={onLogout}>
+            <LogOut className="h-3 w-3" />
+          </Button>
         </div>
       </SidebarFooter>
     </Sidebar>
