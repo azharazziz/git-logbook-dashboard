@@ -99,7 +99,10 @@ const Index = () => {
             <SidebarTrigger className="mr-3" />
             <h1 className="text-sm font-semibold text-foreground">Git Logbook Dashboard</h1>
             {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin text-muted-foreground" />}
-            <div className="ml-auto">
+            <div className="ml-auto flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => setShowFormalReport(true)}>
+                <FileText className="mr-1 h-4 w-4" /> Laporan Formal
+              </Button>
               <Button variant="outline" size="sm" onClick={() => printReport(commits)}>
                 <Printer className="mr-1 h-4 w-4" /> Cetak Report
               </Button>
