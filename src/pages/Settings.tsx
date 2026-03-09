@@ -59,14 +59,7 @@ export default function SettingsPage() {
 
               <div>
                 <p className="font-medium text-foreground mb-1">📄 Data Laporan</p>
-                <pre className="bg-muted p-3 rounded-md text-xs overflow-auto">
-{`report: {
-  institution: "${config.report.institution}",
-  department: "${config.report.department}",
-  authorName: "${config.report.authorName || "(belum diset)"}",
-  supervisorName: "${config.report.supervisorName || "(belum diset)"}",
-}`}
-                </pre>
+                <p className="text-xs">Data instansi dan nama diisi langsung saat akan mencetak laporan formal.</p>
               </div>
             </div>
           </CardContent>
