@@ -23,6 +23,8 @@ interface Props {
   onAutoRefresh: (v: AutoRefresh) => void;
   onRefresh: () => void;
   loading: boolean;
+  repos: RepoConfig[];
+  onLogout: () => void;
 }
 
 export function AppSidebar({
