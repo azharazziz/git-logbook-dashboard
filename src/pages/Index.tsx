@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { printReport } from "@/utils/printReport";
-import { Loader2, Printer } from "lucide-react";
+import { FormalReportDialog } from "@/components/dashboard/FormalReportDialog";
+import { Loader2, Printer, FileText } from "lucide-react";
 import dayjs from "dayjs";
 
 function getDateRange(filter: TimeFilter, custom: { from: string; to: string }) {
