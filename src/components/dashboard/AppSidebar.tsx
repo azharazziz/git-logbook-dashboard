@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { GitBranch, Sun, Moon, RefreshCw } from "lucide-react";
+import { GitBranch, Sun, Moon, RefreshCw, Settings, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 interface Props {
