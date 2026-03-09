@@ -130,6 +130,7 @@ const Index = () => {
       </div>
 
       <CommitModal commit={modalCommit} open={!!modalCommit} onClose={() => setModalCommit(null)} />
+      <FormalReportDialog commits={commits} open={showFormalReport} onClose={() => setShowFormalReport(false)} />
     </SidebarProvider>
   );
 };
