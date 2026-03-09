@@ -58,14 +58,14 @@ export function AppSidebar({
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Repository</SidebarGroupLabel>
-          <SidebarGroupContent className="px-2 group-data-[collapsible=icon]:hidden">
+           <SidebarGroupContent className="px-2 group-data-[collapsible=icon]:hidden">
             <Select value={selectedRepo} onValueChange={onSelectRepo}>
               <SelectTrigger className="w-full bg-sidebar-accent text-sidebar-accent-foreground">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Repositories</SelectItem>
-                {config.repositories.map((r) => (
+                {repos.map((r) => (
                   <SelectItem key={r.repo} value={r.repo}>{r.name}</SelectItem>
                 ))}
               </SelectContent>
