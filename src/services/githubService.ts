@@ -7,6 +7,14 @@ export interface BranchInfo {
   repoFullName: string;
 }
 
+function getHeaders() {
+  const h: Record<string, string> = {
+    Accept: "application/vnd.github.v3+json",
+  };
+  if (config.githubToken) h.Authorization = `Bearer ${config.githubToken}`;
+  return h;
+}
+
 export async function fetchBranches(repoConfig: RepoConfig): Promise<BranchInfo[]> {
   const branches: BranchInfo[] = [];
   let page = 1;
@@ -34,14 +42,6 @@ export async function fetchAllBranches(repos: RepoConfig[]): Promise<BranchInfo[
   return all;
 }
 
-function getHeaders() {
-  const h: Record<string, string> = {
-    Accept: "application/vnd.github.v3+json",
-  };
-  if (config.githubToken) h.Authorization = `Bearer ${config.githubToken}`;
-  return h;
-}
-
 export async function fetchCommits(
   repoConfig: RepoConfig,
   since?: string,
@@ -56,14 +56,6 @@ export async function fetchCommits(
     if (since) params.set("since", since);
     if (until) params.set("until", until);
     if (branch) params.set("sha", branch);
-    params.set("per_page", "100");
-    params.set("page", String(page));
-  let page = 1;
-
-  while (true) {
-    const params = new URLSearchParams();
-    if (since) params.set("since", since);
-    if (until) params.set("until", until);
     params.set("per_page", "100");
     params.set("page", String(page));
 
@@ -90,7 +82,6 @@ export async function fetchCommits(
       }))
     );
 
-    // If less than 100 returned, no more pages
     if (data.length < 100) break;
     page++;
   }
@@ -101,10 +92,11 @@ export async function fetchCommits(
 export async function fetchAllCommits(
   repos: RepoConfig[],
   since?: string,
-  until?: string
+  until?: string,
+  branch?: string
 ): Promise<NormalizedCommit[]> {
   const results = await Promise.allSettled(
-    repos.map((r) => fetchCommits(r, since, until))
+    repos.map((r) => fetchCommits(r, since, until, branch))
   );
 
   const commits: NormalizedCommit[] = [];
