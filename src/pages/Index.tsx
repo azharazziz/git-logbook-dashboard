@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { config, RepoConfig } from "@/config";
 import { NormalizedCommit, TimeFilter, AutoRefresh } from "@/types/commit";
-import { fetchAllCommits, fetchCommits } from "@/services/githubService";
+import { fetchAllCommits, fetchCommits, fetchAllBranches, BranchInfo } from "@/services/githubService";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/dashboard/AppSidebar";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
@@ -42,22 +42,47 @@ const Index = () => {
   const [commits, setCommits] = useState<NormalizedCommit[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedRepo, setSelectedRepo] = useState("all");
+  const [selectedBranch, setSelectedBranch] = useState("all");
+  const [branches, setBranches] = useState<BranchInfo[]>([]);
+  const [branchesLoading, setBranchesLoading] = useState(false);
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("month");
   const [customRange, setCustomRange] = useState({ from: "", to: "" });
   const [autoRefresh, setAutoRefresh] = useState<AutoRefresh>("off");
   const [modalCommit, setModalCommit] = useState<NormalizedCommit | null>(null);
   const [showFormalReport, setShowFormalReport] = useState(false);
 
+  // Fetch branches when repos change
+  useEffect(() => {
+    const loadBranches = async () => {
+      setBranchesLoading(true);
+      try {
+        const data = await fetchAllBranches(repos);
+        setBranches(data);
+      } catch {
+        setBranches([]);
+      } finally {
+        setBranchesLoading(false);
+      }
+    };
+    loadBranches();
+  }, [repos]);
+
+  // Reset branch when repo changes
+  useEffect(() => {
+    setSelectedBranch("all");
+  }, [selectedRepo]);
+
   const loadCommits = useCallback(async () => {
     setLoading(true);
     try {
       const { since, until } = getDateRange(timeFilter, customRange);
+      const branch = selectedBranch === "all" ? undefined : selectedBranch;
       let data: NormalizedCommit[];
       if (selectedRepo === "all") {
-        data = await fetchAllCommits(repos, since, until);
+        data = await fetchAllCommits(repos, since, until, branch);
       } else {
         const repo = repos.find((r) => r.repo === selectedRepo);
-        data = repo ? await fetchCommits(repo, since, until) : [];
+        data = repo ? await fetchCommits(repo, since, until, branch) : [];
       }
       setCommits(data);
     } catch (err: any) {
@@ -65,7 +90,7 @@ const Index = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedRepo, timeFilter, customRange, repos, toast]);
+  }, [selectedRepo, selectedBranch, timeFilter, customRange, repos, toast]);
 
   useEffect(() => { loadCommits(); }, [loadCommits]);
 
@@ -82,6 +107,10 @@ const Index = () => {
         <AppSidebar
           selectedRepo={selectedRepo}
           onSelectRepo={setSelectedRepo}
+          selectedBranch={selectedBranch}
+          onSelectBranch={setSelectedBranch}
+          branches={branches}
+          branchesLoading={branchesLoading}
           timeFilter={timeFilter}
           onTimeFilter={setTimeFilter}
           customRange={customRange}

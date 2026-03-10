@@ -1,5 +1,6 @@
 import { config, RepoConfig } from "@/config";
 import { TimeFilter, AutoRefresh } from "@/types/commit";
+import { BranchInfo } from "@/services/githubService";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel,
   SidebarGroupContent, SidebarHeader, SidebarFooter,
@@ -16,6 +17,10 @@ import { useNavigate } from "react-router-dom";
 interface Props {
   selectedRepo: string;
   onSelectRepo: (v: string) => void;
+  selectedBranch: string;
+  onSelectBranch: (v: string) => void;
+  branches: BranchInfo[];
+  branchesLoading: boolean;
   timeFilter: TimeFilter;
   onTimeFilter: (v: TimeFilter) => void;
   customRange: { from: string; to: string };
@@ -29,7 +34,9 @@ interface Props {
 }
 
 export function AppSidebar({
-  selectedRepo, onSelectRepo, timeFilter, onTimeFilter,
+  selectedRepo, onSelectRepo, selectedBranch, onSelectBranch,
+  branches, branchesLoading,
+  timeFilter, onTimeFilter,
   customRange, onCustomRange, autoRefresh, onAutoRefresh, onRefresh, loading,
   repos, onLogout,
 }: Props) {
@@ -46,6 +53,14 @@ export function AppSidebar({
     { label: "This Month", value: "month" },
     { label: "Custom", value: "custom" },
   ];
+
+  // Filter branches for selected repo
+  const filteredBranches = selectedRepo === "all"
+    ? branches
+    : branches.filter(b => b.repo === selectedRepo);
+
+  // Deduplicate branch names
+  const uniqueBranchNames = Array.from(new Set(filteredBranches.map(b => b.name)));
 
   return (
     <Sidebar collapsible="icon">
@@ -68,6 +83,28 @@ export function AppSidebar({
                 <SelectItem value="all">All Repositories</SelectItem>
                 {repos.map((r) => (
                   <SelectItem key={r.repo} value={r.repo}>{r.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Branch</SidebarGroupLabel>
+          <SidebarGroupContent className="px-2 group-data-[collapsible=icon]:hidden">
+            <Select value={selectedBranch} onValueChange={onSelectBranch} disabled={branchesLoading}>
+              <SelectTrigger className="w-full bg-sidebar-accent text-sidebar-accent-foreground">
+                <SelectValue placeholder={branchesLoading ? "Loading..." : "All Branches"} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Branches</SelectItem>
+                {uniqueBranchNames.map((name) => (
+                  <SelectItem key={name} value={name}>
+                    <span className="flex items-center gap-1.5">
+                      <GitBranch className="h-3 w-3 text-muted-foreground" />
+                      {name}
+                    </span>
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
