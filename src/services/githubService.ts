@@ -45,9 +45,19 @@ function getHeaders() {
 export async function fetchCommits(
   repoConfig: RepoConfig,
   since?: string,
-  until?: string
+  until?: string,
+  branch?: string
 ): Promise<NormalizedCommit[]> {
   const allCommits: NormalizedCommit[] = [];
+  let page = 1;
+
+  while (true) {
+    const params = new URLSearchParams();
+    if (since) params.set("since", since);
+    if (until) params.set("until", until);
+    if (branch) params.set("sha", branch);
+    params.set("per_page", "100");
+    params.set("page", String(page));
   let page = 1;
 
   while (true) {
