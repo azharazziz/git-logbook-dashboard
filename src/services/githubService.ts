@@ -1,6 +1,39 @@
 import { config, RepoConfig } from "@/config";
 import { NormalizedCommit, CommitDetail, CommitFile } from "@/types/commit";
 
+export interface BranchInfo {
+  name: string;
+  repo: string;
+  repoFullName: string;
+}
+
+export async function fetchBranches(repoConfig: RepoConfig): Promise<BranchInfo[]> {
+  const branches: BranchInfo[] = [];
+  let page = 1;
+  while (true) {
+    const url = `https://api.github.com/repos/${repoConfig.owner}/${repoConfig.repo}/branches?per_page=100&page=${page}`;
+    const res = await fetch(url, { headers: getHeaders() });
+    if (!res.ok) return branches;
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) break;
+    branches.push(...data.map((b: any) => ({
+      name: b.name,
+      repo: repoConfig.repo,
+      repoFullName: `${repoConfig.owner}/${repoConfig.repo}`,
+    })));
+    if (data.length < 100) break;
+    page++;
+  }
+  return branches;
+}
+
+export async function fetchAllBranches(repos: RepoConfig[]): Promise<BranchInfo[]> {
+  const results = await Promise.allSettled(repos.map(r => fetchBranches(r)));
+  const all: BranchInfo[] = [];
+  results.forEach(r => { if (r.status === "fulfilled") all.push(...r.value); });
+  return all;
+}
+
 function getHeaders() {
   const h: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
