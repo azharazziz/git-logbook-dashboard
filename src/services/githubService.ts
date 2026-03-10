@@ -1,6 +1,12 @@
 import { config, RepoConfig } from "@/config";
 import { NormalizedCommit, CommitDetail, CommitFile } from "@/types/commit";
 
+export interface BranchInfo {
+  name: string;
+  repo: string;
+  repoFullName: string;
+}
+
 function getHeaders() {
   const h: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
@@ -9,10 +15,38 @@ function getHeaders() {
   return h;
 }
 
+export async function fetchBranches(repoConfig: RepoConfig): Promise<BranchInfo[]> {
+  const branches: BranchInfo[] = [];
+  let page = 1;
+  while (true) {
+    const url = `https://api.github.com/repos/${repoConfig.owner}/${repoConfig.repo}/branches?per_page=100&page=${page}`;
+    const res = await fetch(url, { headers: getHeaders() });
+    if (!res.ok) return branches;
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) break;
+    branches.push(...data.map((b: any) => ({
+      name: b.name,
+      repo: repoConfig.repo,
+      repoFullName: `${repoConfig.owner}/${repoConfig.repo}`,
+    })));
+    if (data.length < 100) break;
+    page++;
+  }
+  return branches;
+}
+
+export async function fetchAllBranches(repos: RepoConfig[]): Promise<BranchInfo[]> {
+  const results = await Promise.allSettled(repos.map(r => fetchBranches(r)));
+  const all: BranchInfo[] = [];
+  results.forEach(r => { if (r.status === "fulfilled") all.push(...r.value); });
+  return all;
+}
+
 export async function fetchCommits(
   repoConfig: RepoConfig,
   since?: string,
-  until?: string
+  until?: string,
+  branch?: string
 ): Promise<NormalizedCommit[]> {
   const allCommits: NormalizedCommit[] = [];
   let page = 1;
@@ -21,6 +55,7 @@ export async function fetchCommits(
     const params = new URLSearchParams();
     if (since) params.set("since", since);
     if (until) params.set("until", until);
+    if (branch) params.set("sha", branch);
     params.set("per_page", "100");
     params.set("page", String(page));
 
@@ -47,7 +82,6 @@ export async function fetchCommits(
       }))
     );
 
-    // If less than 100 returned, no more pages
     if (data.length < 100) break;
     page++;
   }
@@ -58,10 +92,11 @@ export async function fetchCommits(
 export async function fetchAllCommits(
   repos: RepoConfig[],
   since?: string,
-  until?: string
+  until?: string,
+  branch?: string
 ): Promise<NormalizedCommit[]> {
   const results = await Promise.allSettled(
-    repos.map((r) => fetchCommits(r, since, until))
+    repos.map((r) => fetchCommits(r, since, until, branch))
   );
 
   const commits: NormalizedCommit[] = [];
