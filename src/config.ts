@@ -27,9 +27,9 @@ export const config = {
   // =============================================
   repositories: [
     {
-      name: "Donasi Al Quran",
+      name: "Git Logbook",
       owner: "azharazziz",
-      repo: "donasi-alquran-linktree",
+      repo: "git-logbook-dashboard",
     },
   ] as RepoConfig[],
 };
