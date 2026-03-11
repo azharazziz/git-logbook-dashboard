@@ -27,13 +27,8 @@ export const config = {
   // =============================================
   repositories: [
     {
-      name: "Portal Labkesmas",
-      owner: "username",
-      repo: "portal-labkesmas",
-    },
-    {
       name: "Donasi Al Quran",
-      owner: "username",
+      owner: "azharazziz",
       repo: "donasi-alquran-linktree",
     },
   ] as RepoConfig[],
